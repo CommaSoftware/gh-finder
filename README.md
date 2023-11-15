@@ -1,16 +1,23 @@
 # GH Finder
-*This program is being developed as part of the IT-start 2023 ESSUTM hackathon.*
+*Эта программа разрабатывается в рамках хакатона ESSUTM IT-start 2023.*
 
-GH FINDER is a web interface for searching similar repositories on GitHub. Just put a link to the repository to find similar projects in other GitHub repositories.
+GH FINDER - это веб-интерфейс для поиска похожих репозиториев на GitHub. Разместите ссылку на репозиторий, чтобы найти похожие проекты в других репозиториях GitHub.
 
-As a prototype, we have prepared a search engine that searches exclusively for Java loggers. It sounds ridiculous. But it allowed us to concentrate on one semantic core and test our hypothesis on this example
+В качестве прототипа мы подготовили поисковую систему, которая выполняет поиск исключительно по Java-регистраторам. Это звучит нелепо. Но это позволило нам сконцентрироваться на одном семантическом ядре и проверить нашу гипотезу на этом примере
 
-## How does it work?
-We use pre-formed semantic kernels in the form of a list of keywords on a topic.
+## Как это работает?
+Мы используем заранее сформированные семантические ядра в виде списка ключевых слов по теме. 
 
-For analysis, we use the following information about repositories:
-1. Name
-2. Description
+Для анализа мы используем следующую информацию о репозиториях:
+1. Название
+2. Описание
 3. README.md file
-4. Keywords
-5. Technologies used
+4. Ключевые слова
+5. Используемые технологии
+
+Мы "усредняем" текст, содержащий информацию о репозитории, который вводит пользователь. После чего разбиваем полученный текст на ключевые слова и ищем совпадения с семантическим ядром.
+
+После чего мы делаем выборку репозиториев из API GitHub, сравнивая их подобным образом с нашим семантическим ядром.
+
+## Доработки, которые можно внести в будущем
+...
