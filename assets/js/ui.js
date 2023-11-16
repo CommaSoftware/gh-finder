@@ -31,8 +31,10 @@ SearchInputBtnClear.addEventListener('click', () => {
 const tempBtn = document.querySelector("#BtnChooseRepo");
 const body = document.querySelector("body");
 
-tempBtn.addEventListener('click', () => {
-	body.classList.add("searching");
+searchInput.addEventListener('keyup', (e) => {
+	if (e.keyCode === 13) {
+		body.classList.add("searching");
+  }
 })
 
 // ---------- Transform header (end) ---------- //
