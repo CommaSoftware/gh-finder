@@ -18,6 +18,8 @@
 	height: 100vh;
 	padding: var(--content-area-padding);
 	margin: 0 auto;
+
+	transition: 400ms ease-in-out;
 }
 
 .header__img-tentacle {
@@ -26,11 +28,13 @@
 	top: -64px;
 	left: 50%;
 	transform: translateX(-50%);
+
+	transition: ease-in 250ms;
 }
 
 .header__headings {
 	max-width: var(--space-column-2);
-	margin: 0 auto 24px auto;
+	margin: 0 auto;
 }
 
 .header__headings__ghfinder-logo {
@@ -74,6 +78,37 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
+
+	padding: 32px 0 16px 0;
+	border-bottom: 1px solid transparent;
+}
+
+/* Header style searching */
+.header.searching {
+	height: 85px;
+	padding: 0 var(--content-area-padding);
+}
+
+.header.searching .header__img-tentacle {
+	transform: translate(-50%, -100%);
+}
+
+.header.searching .header__headings {
+	animation: 300ms ease-in-out headingsDisappearance;
+	position: absolute;
+	left: 50%;
+	top: -100vh;
+}
+
+@keyframes headingsDisappearance {
+	from { opacity: 1; position: static; }
+	to { opacity: 0; position: static; }
+}
+
+.header.searching .header__search-block {
+	border-color: var(--color-gray-bg);
+	
+	transition: 400ms ease-in;
 }
 
 
@@ -124,4 +159,26 @@
 
 .footer__list__item a span {
 	color: var(--color-blue);
+}
+
+@media only screen and (max-width: 340px) {
+	.header__headings__ghfinder-logo::after {
+		top: auto;
+		bottom: 0;
+		right: -8px;
+		transform: none;
+		outline: 2px solid var(--color-white);
+	}
+
+	.header__img-tentacle {
+		top: -24px;
+		width: var(--space-column);
+	}
+}
+
+@media only screen and (max-height: 550px) {
+	.header__img-tentacle {
+		top: -24px;
+		width: var(--space-column);
+	}
 }
