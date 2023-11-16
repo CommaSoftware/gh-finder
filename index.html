@@ -19,11 +19,14 @@
 		</div>
 		<div class="header__search-block">
 			<div id="BtnChooseRepo" class="btn only-icon"><svg viewBox="0 0 17 17"><path d="M2.5,3c0-0.7,0.3-1.3,0.7-1.8C3.7,0.8,4.3,0.5,5,0.5h8.8c0.2,0,0.4,0.1,0.5,0.2c0.1,0.1,0.2,0.3,0.2,0.5v12.5c0,0.2-0.1,0.4-0.2,0.5c-0.1,0.1-0.3,0.2-0.5,0.2h-2.5c-0.2,0-0.4-0.1-0.5-0.2c-0.1-0.1-0.2-0.3-0.2-0.5s0.1-0.4,0.2-0.5c0.1-0.1,0.3-0.2,0.5-0.2H13v-2H5c-0.2,0-0.4,0.1-0.6,0.2c-0.2,0.1-0.3,0.3-0.4,0.4C4,11.8,4,12,4,12.2c0,0.2,0.1,0.4,0.3,0.5c0.1,0.1,0.1,0.2,0.2,0.2c0,0.1,0.1,0.2,0.1,0.3c0,0.1,0,0.2-0.1,0.3c0,0.1-0.1,0.2-0.2,0.2c-0.1,0.1-0.2,0.1-0.2,0.2C3.9,14,3.8,14,3.7,14c-0.1,0-0.2,0-0.3-0.1c-0.1,0-0.2-0.1-0.2-0.2c-0.5-0.5-0.7-1.1-0.7-1.8V3z M13,2H5C4.7,2,4.5,2.1,4.3,2.3C4.1,2.5,4,2.7,4,3v6.7c0.3-0.1,0.7-0.2,1-0.2h8V2z M5.5,12.8c0-0.1,0-0.1,0.1-0.2c0,0,0.1-0.1,0.2-0.1h3.5c0.1,0,0.1,0,0.2,0.1c0,0,0.1,0.1,0.1,0.2V16c0,0,0,0.1,0,0.1c0,0-0.1,0.1-0.1,0.1c0,0-0.1,0-0.1,0c0,0-0.1,0-0.1,0l-1.5-1.1c0,0-0.1-0.1-0.2-0.1s-0.1,0-0.2,0.1l-1.4,1.1c0,0-0.1,0-0.1,0s-0.1,0-0.1,0c0,0-0.1-0.1-0.1-0.1c0,0,0-0.1,0-0.1V12.8z"/></svg></div>
-			<form id="mainSearchform" action="">
+			<form id="mainSearchForm" class="some" action="">
 				<div class="btn only-icon transparent no-pointer">
 					<svg class="header__search-form__icon" viewBox="0 0 16 16"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"></path></svg>
 				</div>
 				<input id="mainSearchInput" name="mainSearchInput" type="text" placeholder="https://github.com/repository">
+				<div id="mainSearchInputBtnClear" class="btn only-icon transparent">
+					<svg viewBox="0 0 16 16"><path d="M2.343 13.657A8 8 0 1 1 13.658 2.343 8 8 0 0 1 2.343 13.657ZM6.03 4.97a.751.751 0 0 0-1.042.018.751.751 0 0 0-.018 1.042L6.94 8 4.97 9.97a.749.749 0 0 0 .326 1.275.749.749 0 0 0 .734-.215L8 9.06l1.97 1.97a.749.749 0 0 0 1.275-.326.749.749 0 0 0-.215-.734L9.06 8l1.97-1.97a.749.749 0 0 0-.326-1.275.749.749 0 0 0-.734.215L8 6.94Z"></path></svg>
+				</div>
 			</form>
 		</div>
 	</header>
@@ -34,10 +37,12 @@
 
 	<footer class="footer">
 		<ul class="footer__list">
-			<li class="footer__list__item"><a href="#!">About</a></li>
-			<li class="footer__list__item"><a href="">Documentation</a></li>
-			<li class="footer__list__item"><a href="">Created by <span>Comma Software</span></a></li>
+			<li class="footer__list__item"><a href="https://github.com/CommaSoftware/gh-finder">Documentation</a></li>
+			<li class="footer__list__item"><a href="https://github.com/CommaSoftware">Created by <span>Comma Software</span></a></li>
 		</ul>
 	</footer>
+
+	<script src="assets/js/app.js"></script>
+	<script src="assets/js/ui.js"></script>
 </body>
 </html>

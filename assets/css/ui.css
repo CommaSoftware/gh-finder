@@ -64,7 +64,7 @@
 
 
 /* ---------- Search Form ---------- */
-#mainSearchform {
+#mainSearchForm {
 	display: flex;
 	flex-wrap: nowrap;
 
@@ -76,6 +76,10 @@
 	border: 1px solid var(--color-gray-bg-dark);
 
 	cursor: text;
+}
+
+#mainSearchForm.focused {
+	border-color: var(--color-blue);
 }
 
 #mainSearchInput {
@@ -105,4 +109,8 @@
 
 .header__search-form__icon path {
 	fill: var(--color-gray)
+}
+
+#mainSearchInputBtnClear:not(.visible) {
+	display: none;
 }
