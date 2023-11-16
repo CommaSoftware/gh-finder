@@ -1,0 +1,34 @@
+:root {
+	/* Colors */
+	--color-blue-ease: #DDF4FF;
+	--color-blue: #0969DA;
+	--color-green: #1A7F37;
+	--сolor-brown: #9A6700;
+	--color-black: #012328;
+	--color-gray: #656D76;
+	--color-gray-bg-dark: #AFB8C1;
+	--color-gray-bg: #D0D7DE;
+	--color-gray-bg-ease: #F6F8FA;
+	--color-white: #FFFFFF;
+
+	/* Font-sizes */
+	--font-size-content-small: 12px;
+	--font-size-content: 14px;
+	--font-size-content-big: 16px;
+	--font-size-heading: 24px;
+
+	/* UI variables */
+	--content-area-width: 800px;
+	--content-area-padding: 16px;
+	--footer-height: 80px;
+
+	/* Columns system */
+	--column-count: 6;
+	--space-column-gap: 8px;
+
+	--space-column-plus-gap: calc((var(--content-area-width) + var(--space-column-gap)) / var(--column-count));
+	--space-column: calc(var(--space-column-plus-gap) - var(--space-column-gap));
+	--space-column-2: calc((var(--space-column-plus-gap)) * 2 - var(--space-column-gap));
+	--space-column-3: calc((var(--space-column-plus-gap)) * 3 - var(--space-column-gap));
+	--space-column-4: calc((var(--space-column-plus-gap)) * 4 - var(--space-column-gap));
+}

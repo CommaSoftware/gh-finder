@@ -1,0 +1,117 @@
+* {
+	margin: 0;
+	padding: 0;
+
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	letter-spacing: -0.01em;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	box-sizing: border-box;
+	max-width: var(--content-area-width);
+	height: 100vh;
+	padding: var(--content-area-padding);
+	margin: 0 auto;
+}
+
+.header__img-tentacle {
+	position: absolute;
+	width: var(--space-column-2);
+	top: -64px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.header__headings {
+	max-width: var(--space-column-2);
+	margin: 0 auto 24px auto;
+}
+
+.header__headings__ghfinder-logo {
+	position: relative;
+}
+
+.header__headings__ghfinder-logo::after {
+	content: "Alpha";
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translateX(100%);
+
+	padding: 0 4px;
+	border-radius: 4px;
+	background-color: var(--color-green);
+
+	color: var(--color-white);
+	font-size: 8px;
+	font-weight: 400;
+	line-height: 14px; /* 175% */
+	letter-spacing: -0.16px;
+}
+
+.header__headings__ghfinder-logo svg {
+	width: 100%;
+}
+
+.header__headings__descr {
+	display: inline-block;
+	width: 100%;
+	margin-top: 12px;
+	
+	color: var(--color-gray);
+	text-align: center;
+	font-size: var(--font-size-content);
+	font-weight: 400;
+}
+
+.footer {
+	position: fixed;
+	bottom: 0;
+
+	box-sizing: border-box;
+	width: 100%;
+	padding: 32px 16px;
+
+	background-color: var(--color-white);
+}
+
+.footer__list {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 8px;
+
+	list-style-type: none;
+}
+
+.footer__list__item {
+	color: var(--color-gray);
+	font-size: var(--font-size-content-small);
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	letter-spacing: -0.16px;
+}
+
+.footer__list__item:not(:first-child)::before {
+	content: "·";
+	margin-right: 8px;
+}
+
+.footer__list__item a {
+	color: var(--color-gray);
+	text-decoration: none;
+}
+
+.footer__list__item a:hover {
+	color: var(--color-blue);
+	text-decoration: underline;
+}
+
+.footer__list__item a span {
+	color: var(--color-blue);
+}
