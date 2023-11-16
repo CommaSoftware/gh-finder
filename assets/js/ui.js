@@ -29,10 +29,10 @@ SearchInputBtnClear.addEventListener('click', () => {
 
 // ---------- Transform header (start) ---------- //
 const tempBtn = document.querySelector("#BtnChooseRepo");
-const header = document.querySelector(".header");
+const body = document.querySelector("body");
 
 tempBtn.addEventListener('click', () => {
-	header.classList.add("searching");
+	body.classList.add("searching");
 })
 
 // ---------- Transform header (end) ---------- //
