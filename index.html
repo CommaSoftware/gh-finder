@@ -38,14 +38,14 @@
 	<div class="results">
 		<div class="results__header">
 			<div class="results__header__counter"><span id="CountResults">0</span> Results</div>
-			<select name="pets" id="pet-select">
-				<option value="best-match">Best match</option>
-				<option value="most-stars">Most stars</option>
-				<option value="fewest-stars">Fewest stars</option>
-				<option value="most-forks">Most forks</option>
-				<option value="fewest-forks">Fewest forks</option>
-				<option value="recently-updated">Recently updated</option>
-				<option value="least-recently-updated">Least recently updated</option>
+			<select name="pets" id="pet-select" onchange="ReorderSearch(this)">
+				<option value="">Best match</option>
+				<option value="stars/desc">Most stars</option>
+				<option value="stars/asc">Fewest stars</option>
+				<option value="forks/desc">Most forks</option>
+				<option value="forks/asc">Fewest forks</option>
+				<option value="updated/desc">Recently updated</option>
+				<option value="updated/asc">Least recently updated</option>
 			</select>
 		</div>
 		<div class="results__block" id="results__block">

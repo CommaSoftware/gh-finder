@@ -100,6 +100,7 @@ function card(data) {
 
 
 // ---------- Search (start) ---------- //
+
 function search() {
 
   document.querySelector('#results__block').innerHTML = ''
@@ -108,50 +109,770 @@ function search() {
   var repoUrl = document.querySelector('#mainSearchInput').value;
   console.log("repoUrl: " + repoUrl);
 
-  var urlParts = repoUrl.split('/');
-  var owner = urlParts[3];
-  var repo = urlParts[4];
-  console.log('owner: ', owner);
-  console.log('repo: ', repo);
-
-  var apiUrlTopic = 'https://api.github.com/repos/' + owner + '/' + repo + '/topics';
-  console.log('topics apiUrl: ' + apiUrlTopic);
-
-  var data
-  fetch(apiUrlTopic)
-  .then(response => response.json())
-  .then(data => {
-    console.log(data)
-
-    var topic = '';
-    keywords = data.names
-    data.names.forEach((elem) => {
-      topic += elem + '+';
-      //document.querySelector('#keywords').innerHTML 
-      //+= '<div class="keyword" onclick="del_keyword(\'' + elem.trimStart() + '\');"><h4>' + elem + '</h4></div>'
-    })
-    topic = topic.slice(0, -1)
-    console.log(topic)
-
-    var apiUrlSearch = 'https://api.github.com/search/repositories?q=topic:' + topic + '&sort=stars&order=desc'
-    console.log('search apiUrl: ' + apiUrlSearch);
-
-    fetch(apiUrlSearch)
-    .then(response => response.json())
+  var data = GetTheSame(repoUrl)
     .then(data => {
-      console.log(data)
-      document.querySelector('#CountResults').innerText = data.total_count
-
-      data.items.forEach((elem) => {
-        console.log(elem)
+      data.forEach((elem) => {
         document.querySelector('#results__block').innerHTML += card(elem)
-        console.log(card(elem))
       })
     })
-    .catch(error => console.error(error));
-  })
-  .catch(error => console.error(error));
 
-  findSearchSimilarBtns();
-  return false;}
+  //findSearchSimilarBtns();
+  return false;
+}
 // ---------- Search (start) ---------- //
+var searchQuery;
+var searchFullName;
+function ReorderSearch(sender){
+  document.querySelector('#results__block').innerHTML = ''
+  const [search, order] = sender.value.split('/')
+  let href = "https://api.github.com/search/repositories?q=" + searchQuery + '&s='+search + '&o=' + order
+  console.log(href)
+  fetch(href)
+    .then((response) => response.json())
+    .then((data) => data.items.filter(repo => repo.full_name != searchFullName))
+    .then((data) => {
+      data.forEach((elem) => {
+        document.querySelector('#results__block').innerHTML += card(elem)
+      })
+    })
+}
+async function GetTheSame(href){
+  let regexp = /https:\/\/github\.com\/(.*?)\/(.*?)$/
+    const [_, ovner, repo] = href.match(regexp)
+    searchFullName = `${ovner}/${repo}`
+    let query = await get_search_query(ovner, repo)
+    searchQuery = query
+    console.log(query)
+    const data = await fetch("https://api.github.com/search/repositories?q=" + query)
+        .then((response) => response.json())
+        .then((data) => data.items)
+    return data.filter(repo => repo.full_name != searchFullName)
+}
+async function get_search_query(ovner, repo) {
+    let data = await ContentCollector.getContent(repo, ovner, "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");
+    let {content, language} = KeyWordsGen.extractKeyWords(data);
+
+    const pom_xml = await fetch(`https://api.github.com/repos/${ovner}/${repo}/contents/pom.xml`)
+        .then((response) => response.json())
+        .then((data) => data.content ? atob(data.content) : false)
+    regexp = /<groupId>(.*?)<\/groupId>|<artifactId>(.*?)<\/artifactId>/g
+    const matches = pom_xml ? pom_xml.matchAll(regexp) : []
+    let libs = []
+    for (const match of matches){
+        const lib = (match[1] ?? match[2]).toLowerCase()
+        if (libs.includes(lib))
+            continue
+        libs.push(lib)
+    }
+
+    let result = content
+        .filter(item => {
+            const title = item[Object.keys(item)[0]].toLowerCase()
+            if (isNumeric(title))
+                return false
+            if (title.includes(repo.toLowerCase()) || title.includes(ovner.toLowerCase()))
+                return false
+            for (const lib of libs)
+                if (title.includes(lib))
+                    return false
+            return true
+        })
+        .map(item => item[Object.keys(item)[0]])
+        .slice(0, 6)
+        .join(' OR ')
+    result += " language:" + language
+    return result
+}
+function isNumeric(str) {
+  if (typeof str != "string") return false
+    return !isNaN(str) && !isNaN(parseFloat(str))
+}
+const KeyWordsGen = new class KeyWordsGen {
+    extractKeyWords = (data) => {
+        let Content = data.content;
+        if (!Content) return;
+        let stopWords = this.getStopWords();
+        stopWords += data.owner;
+        //stopWords += data.repo;
+
+
+        Content.map((letter,index) => Content[index] = letter.toLowerCase());
+
+
+
+        let FContent = Content.filter((item) => {
+            return !stopWords.includes(item);
+        });
+        
+
+        let wordCounts = {};
+
+        for (let i = 0; i < FContent.length; i++) {
+            let word = FContent[i];
+            
+            wordCounts[word] = wordCounts[word] ? wordCounts[word] + 1 : 1;
+        }
+
+        let sortArray = Object.keys(wordCounts).map((key) => ({
+            [wordCounts[key]]: key,
+        }));
+
+        sortArray.sort((a, b) => {
+            let countA = parseInt(Object.keys(a)[0]);
+            let countB = parseInt(Object.keys(b)[0]);
+            return countB - countA;
+        });
+        let result = {
+            language: data.language,
+            owner:data.owner,
+            repo: data.repo,
+            content:sortArray
+        }
+        return result;
+    };
+    getStopWords = () => {
+        let stopWords;
+        try {
+            stopWords = (`a
+about
+above
+across
+after
+again
+against
+all
+almost
+alone
+along
+already
+also
+although
+always
+among
+an
+and
+another
+any
+anybody
+anyone
+anything
+anywhere
+are
+area
+areas
+around
+as
+ask
+asked
+asking
+asks
+at
+away
+b
+back
+backed
+backing
+backs
+be
+because
+become
+becomes
+became
+been
+before
+began
+behind
+being
+beings
+best
+better
+between
+big
+both
+but
+by
+c
+came
+can
+cannot
+case
+cases
+certain
+certainly
+clear
+clearly
+come
+could
+d
+did
+differ
+different
+differently
+do
+does
+done
+down
+downed
+downing
+downs
+during
+e
+each
+early
+either
+end
+ended
+ending
+ends
+enough
+even
+evenly
+ever
+every
+everybody
+everyone
+everything
+everywhere
+f
+face
+faces
+fact
+facts
+far
+felt
+few
+find
+finds
+first
+for
+four
+from
+full
+fully
+further
+furthered
+furthering
+furthers
+g
+gave
+general
+generally
+get
+gets
+give
+given
+gives
+go
+going
+good
+goods
+got
+great
+greater
+greatest
+group
+grouped
+grouping
+groups
+h
+had
+has
+have
+having
+he
+her
+herself
+here
+high
+higher
+highest
+him
+himself
+his
+how
+however
+i
+if
+important
+in
+interest
+interested
+interesting
+interests
+into
+is
+it
+its
+itself
+j
+just
+k
+keep
+keeps
+kind
+knew
+know
+known
+knows
+l
+large
+largely
+last
+later
+latest
+least
+less
+let
+lets
+like
+likely
+long
+longer
+longest
+m
+made
+make
+making
+man
+many
+may
+me
+member
+members
+men
+might
+more
+most
+mostly
+mr
+mrs
+much
+must
+my
+myself
+n
+necessary
+need
+needed
+needing
+needs
+never
+new
+newer
+newest
+next
+no
+non
+not
+nobody
+noone
+nothing
+now
+nowhere
+number
+numbers
+o
+of
+off
+often
+old
+older
+oldest
+on
+once
+one
+only
+open
+opened
+opening
+opens
+or
+order
+ordered
+ordering
+orders
+other
+others
+our
+out
+over
+p
+part
+parted
+parting
+parts
+per
+perhaps
+place
+places
+point
+pointed
+pointing
+points
+possible
+present
+presented
+presenting
+presents
+problem
+problems
+put
+puts
+q
+quite
+r
+rather
+really
+right
+room
+rooms
+s
+said
+same
+saw
+say
+says
+second
+seconds
+see
+sees
+seem
+seemed
+seeming
+seems
+several
+shall
+she
+should
+show
+showed
+showing
+shows
+side
+sides
+since
+small
+smaller
+smallest
+so
+some
+somebody
+someone
+something
+somewhere
+state
+states
+still
+such
+sure
+t
+take
+taken
+than
+that
+the
+their
+them
+then
+there
+therefore
+these
+they
+thing
+things
+think
+thinks
+this
+those
+though
+thought
+thoughts
+three
+through
+thus
+to
+today
+together
+too
+took
+toward
+turn
+turned
+turning
+turns
+two
+u
+under
+until
+up
+upon
+us
+use
+uses
+used
+v
+very
+w
+want
+wanted
+wanting
+wants
+was
+way
+ways
+we
+well
+wells
+went
+were
+what
+when
+where
+whether
+which
+while
+who
+whole
+whose
+why
+will
+with
+within
+without
+work
+worked
+working
+works
+would
+y
+year
+years
+yet
+you
+young
+younger
+youngest
+your
+yours
+
+everyday
+today
+yesterday
+tomorrow
+now
+then
+later
+soon
+early
+late
+always
+never
+often
+rarely
+sometimes
+usually
+
+php
+html
+twig
+c#
+java
+python
+javascript
+ruby
+swift
+kotlin
+scala
+go
+rust
+r
+perl
+lua
+typescript
+bash
+powershell
+groovy
+fortran
+cobol
+pascal
+ada
+lisp
+prolog
+haskell
+erlang
+elixir
+clojure
+dart
+f#
+julia
+shell
+assembly
+matlab
+objective-c
+racket
+scheme
+
+licensed
+licenses
+license
+https
+org
+io
+github
+build
+file
+image
+yml
+asf
+
+
+backend
+versatile
+feature-rich
+dotnet
+net6
+www
+code
+community 
+maven 
+please 
+pull 
+changes 
+user 
+issues 
+simple 
+fork 
+branch
+framework 
+jakarta 
+users 
+version 
+start 
+readme 
+md 
+application 
+app 
+web 
+spring 
+boot 
+jvm `)
+            //console.log(stopWords);
+        } catch (e) {
+            console.log("Error:", e.stack);
+        }
+        return stopWords;
+    };
+}
+const ContentCollector = new class ContentCollector {
+    getRepositoryInfo = async (owner, repo) => {
+        return( new Promise((resolve,reject)=>{
+            fetch( `https://api.github.com/repos/${owner}/${repo}`, {headers: {Authorization: `Bearer ${this._authToken}`}})
+            .then((response) => response.json())
+            .then((data) => {
+                resolve(data);
+            })
+            .catch((error) => {
+                resolve(false);
+            });
+        }))
+    };
+    extractWords = (repository) => {
+        const keywords = [];
+        let nameKeywords;
+
+        try {
+             nameKeywords = repository.name.split("-");
+        } catch (error) {
+            console.log("repository is null");
+            return false;
+        }
+        let description = repository.template_repository?.description ?? repository.description
+        const descriptionKeywords = description.match(/\b(\w+)\b/g);
+
+        keywords.push(...nameKeywords, ...descriptionKeywords);
+
+        if (repository.language) {
+            keywords.push(repository.language);
+            this._repoLanguage = repository.language;
+        }
+
+        if (repository.topics) {
+            keywords.push(...repository.topics);
+        }
+
+        return keywords;
+    };
+    analyzeRepository = async (owner, repo) => {
+        if(!owner ||!repo ) return false;
+        const repository = await this.getRepositoryInfo(owner, repo);
+        const keywords = this.extractWords(repository);
+        return keywords;
+    };
+    parseReadme = async (owner, repo) => {
+        if(!owner ||!repo ) return false;
+        return( new Promise((resolve,reject)=>{
+            fetch( `https://api.github.com/repos/${owner}/${repo}/readme`, {headers: {Authorization: `Bearer ${this._authToken}`}})
+            .then((response) => response.json())
+            .then((data) => {
+                let readme = Buffer.from(data.content, "base64").toString();
+                resolve(readme);
+            })
+            .catch((error) => {
+                resolve(false);
+            });
+        }))
+    };
+    GetRepoOwnerByName = (Name) => {
+        return( new Promise((resolve,reject)=>{
+            fetch(`https://api.github.com/search/repositories?q=${Name}`,  {headers: {Authorization: `Bearer ${this._authToken}`}})
+            .then((response) => response.json())
+            .then((data) => {
+                let findedItem;
+                try {
+                    findedItem = data.items[0].owner.login;
+                } catch (error) {
+                    findedItem = false;
+                }
+                resolve(findedItem);
+            })
+            .catch((error) => {
+                resolve(false);
+            });
+        }))
+    };
+    async getContent(RepoName, RepoOwner, AuthToken) {
+        let priorityIndex = 4;
+
+        if(!RepoName) return false;
+        this._repoName = RepoName;
+        this._authToken = AuthToken;
+
+        if(!RepoOwner) 
+            this._repoOwner = await this.GetRepoOwnerByName(RepoName);
+        else
+            this._repoOwner = RepoOwner;
+        
+        let repoWordsArr = await this.analyzeRepository(this._repoOwner,this._repoName);
+        let readmeWords = await this.parseReadme(this._repoOwner,this._repoName);
+        var readmeWordsArr = readmeWords ? readmeWords.match(/\b(\w+)\b/g) : [];
+        
+        //concatinate all data
+        let AllContent = repoWordsArr;
+
+        for( let i = 0; i<priorityIndex; i++){
+            AllContent = [...AllContent,...repoWordsArr ];
+        }
+        
+        AllContent = [...AllContent, ...readmeWordsArr];
+
+        let result = {
+            language: this._repoLanguage,
+            owner: this._repoOwner,
+            repo: this._repoName,
+            content:AllContent
+        }
+        
+
+        return result;
+    }
+}
