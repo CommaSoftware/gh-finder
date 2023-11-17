@@ -125,7 +125,7 @@ var searchFullName;
 function ReorderSearch(sender){
   document.querySelector('#results__block').innerHTML = ''
   const [search, order] = sender.value.split('/')
-  let href = "https://api.github.com/search/repositories?q=" + searchQuery + '&s='+search + '&o=' + order
+  let href = "https://api.github.com/search/repositories?q=" + searchQuery + (order ? ('&s='+search + '&o=' + order) : "")
   console.log(href)
   fetch(href)
     .then((response) => response.json())
@@ -139,17 +139,18 @@ function ReorderSearch(sender){
 async function GetTheSame(href){
   let regexp = /https:\/\/github\.com\/(.*?)\/(.*?)$/
     const [_, ovner, repo] = href.match(regexp)
-    searchFullName = `${ovner}/${repo}`
+    let fullName = `${ovner}/${repo}`
+    searchFullName = fullName
     let query = await get_search_query(ovner, repo)
     searchQuery = query
     console.log(query)
     const data = await fetch("https://api.github.com/search/repositories?q=" + query)
         .then((response) => response.json())
         .then((data) => data.items)
-    return data.filter(repo => repo.full_name != searchFullName)
+    return data.filter(repo => repo.full_name != fullName)
 }
 async function get_search_query(ovner, repo) {
-    let data = await ContentCollector.getContent(repo, ovner, "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");
+    let data = await ContentCollector.getContent(repo, ovner, "Your_Git_Api_Token");
     let {content, language} = KeyWordsGen.extractKeyWords(data);
 
     const pom_xml = await fetch(`https://api.github.com/repos/${ovner}/${repo}/contents/pom.xml`)
