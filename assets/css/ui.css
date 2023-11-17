@@ -117,11 +117,16 @@
 
 /* ---------- Repository ---------- */
 .repository {
+	position: relative;
 	display: flex;
 	padding: 16px;
 
 	border-radius: 4px;
 	border: 1px solid var(--color-gray-bg);
+}
+
+.repository__descr {
+	max-width: calc(100% - 90px);
 }
 
 .repository .btn {
